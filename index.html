@@ -12,8 +12,9 @@
         :root {
             --red-main: #ff003c;
             --red-dark: #660018;
-            --bg-black: #080405;
-            --panel-bg: rgba(20, 5, 8, 0.9);
+            --bg-black: #050203;
+            --green-hack: #00ff66;
+            --panel-bg: rgba(20, 5, 8, 0.95);
         }
 
         * {
@@ -24,36 +25,76 @@
             font-family: 'Share Tech Mono', monospace;
         }
 
-        body {
+        html, body {
+            width: 100vw;
+            height: 100vh;
             background-color: var(--bg-black);
             color: var(--red-main);
-            min-height: 100vh;
-            padding: 25px 15px 15px 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow-x: hidden;
+            overflow: hidden;
+            position: fixed;
         }
 
-        /* Effetto griglia CRT / Scanline stile Cyberpunk */
+        /* Effetto Linee CRT Cyberpunk */
         body::before {
             content: " ";
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
             background-size: 100% 4px;
-            z-index: 10;
+            z-index: 100;
             pointer-events: none;
         }
 
-        /* Intestazione Arasaka */
+        /* --- SCHERMATA INTRO TERMINALE HACKING --- */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 999;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            box-sizing: border-box;
+            font-size: 0.85rem;
+            color: var(--red-main);
+        }
+
+        .terminal-log {
+            line-height: 1.5;
+            word-break: break-all;
+            margin-bottom: 20px;
+        }
+
+        .log-green { color: var(--green-hack); }
+        .log-red { color: var(--red-main); font-weight: bold; }
+
+        .progress-border {
+            border: 1px solid var(--red-main);
+            padding: 10px;
+            text-align: center;
+            background: rgba(255, 0, 60, 0.1);
+        }
+
+        /* --- MENU PRINCIPALE ARASAKA --- */
+        #main-hud {
+            display: none; /* Nascosto durante l'intro */
+            height: 100vh;
+            padding: 40px 15px 20px 15px;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
         .header {
             border: 2px solid var(--red-main);
             padding: 12px;
             background: var(--panel-bg);
-            box-shadow: 0 0 12px rgba(255, 0, 60, 0.4);
-            position: relative;
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.5);
         }
 
         .header-title {
@@ -68,10 +109,7 @@
             margin-bottom: 8px;
         }
 
-        .kanji {
-            font-size: 1.2rem;
-            letter-spacing: 4px;
-        }
+        .kanji { font-size: 1.2rem; letter-spacing: 4px; }
 
         .status-bar {
             font-size: 0.75rem;
@@ -80,14 +118,13 @@
             opacity: 0.9;
         }
 
-        /* Box Stato Sistema (Ispirato agli screen) */
         .status-box {
             margin: 15px 0;
             border: 1px solid var(--red-main);
             padding: 10px;
-            background: rgba(40, 0, 10, 0.4);
+            background: rgba(40, 0, 10, 0.5);
             font-size: 0.85rem;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .status-item {
@@ -99,22 +136,20 @@
         .status-item span:last-child {
             color: #fff;
             background: var(--red-dark);
-            padding: 0 4px;
+            padding: 0 5px;
         }
 
-        /* Menu Pulsanti */
         .menu-grid {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-top: 5px;
         }
 
         .arasaka-btn {
             background: var(--panel-bg);
             border: 1px solid var(--red-main);
             color: var(--red-main);
-            padding: 14px 18px;
+            padding: 15px 18px;
             font-size: 1.1rem;
             letter-spacing: 2px;
             display: flex;
@@ -122,25 +157,16 @@
             justify-content: space-between;
             cursor: pointer;
             transition: all 0.15s ease;
-            position: relative;
         }
 
-        /* Reazione al tocco su iPhone */
         .arasaka-btn:active {
             background: var(--red-main);
             color: #000;
-            box-shadow: 0 0 15px var(--red-main);
+            box-shadow: 0 0 20px var(--red-main);
             transform: scale(0.98);
         }
 
-        .btn-tag {
-            font-size: 0.75rem;
-            opacity: 0.7;
-        }
-
-        /* Footer con codice a barre */
         .footer {
-            margin-top: 15px;
             text-align: center;
             border-top: 1px dashed var(--red-main);
             padding-top: 10px;
@@ -158,84 +184,129 @@
 </head>
 <body>
 
-    <!-- Intestazione -->
-    <div class="header">
-        <div class="header-title">
-            <span>ARASAKA</span>
-            <span class="kanji">荒坂社</span>
+    <!-- INTERFACCIA INTRO (TERMINALE) -->
+    <div id="intro-screen">
+        <div class="terminal-log" id="log-content">
+            > INITIALIZING CYBERDECK LINK...<br>
         </div>
-        <div class="status-bar">
-            <span>SYS: BATTLEDECK V.02</span>
-            <span>SEC: LEVEL 5</span>
+        <div class="progress-border">
+            <span class="log-red">SYSTEM REBOOTING // ARASAKA OS</span>
         </div>
     </div>
 
-    <!-- Box informazioni -->
-    <div class="status-box">
-        <div class="status-item">
-            <span>OPERATORE:</span>
-            <span id="telegram-user">GUEST</span>
+    <!-- MENU PRINCIPALE ARASAKA -->
+    <div id="main-hud">
+        <div class="header">
+            <div class="header-title">
+                <span>ARASAKA</span>
+                <span class="kanji">荒坂社</span>
+            </div>
+            <div class="status-bar">
+                <span>SYS: BATTLEDECK V.02</span>
+                <span>SEC: LEVEL 5</span>
+            </div>
         </div>
-        <div class="status-item">
-            <span>STATO RETE:</span>
-            <span>BREACHED</span>
-        </div>
-        <div class="status-item">
-            <span>IP TARGET:</span>
-            <span>127.0.0.1</span>
-        </div>
-    </div>
 
-    <!-- Lista Pulsanti Menu -->
-    <div class="menu-grid">
-        <button class="arasaka-btn" onclick="triggerAction('HACK')">
-            <span>[ HACK SYSTEM ]</span>
-            <span class="btn-tag">▶ 01</span>
-        </button>
-        <button class="arasaka-btn" onclick="triggerAction('DATA')">
-            <span>[ DATA FILES ]</span>
-            <span class="btn-tag">▶ 02</span>
-        </button>
-        <button class="arasaka-btn" onclick="triggerAction('NET')">
-            <span>[ NETWORK SCAN ]</span>
-            <span class="btn-tag">▶ 03</span>
-        </button>
-        <button class="arasaka-btn" onclick="triggerAction('CLOSE')">
-            <span>[ DISCONNECT ]</span>
-            <span class="btn-tag">✖ ESC</span>
-        </button>
-    </div>
+        <div class="status-box">
+            <div class="status-item">
+                <span>NETRUNNER:</span>
+                <span id="telegram-user">UNKNOWN</span>
+            </div>
+            <div class="status-item">
+                <span>NET STATUS:</span>
+                <span>BREACHED</span>
+            </div>
+            <div class="status-item">
+                <span>TARGET NODE:</span>
+                <span>127.0.0.1</span>
+            </div>
+        </div>
 
-    <!-- Footer Cyberpunk -->
-    <div class="footer">
-        <div>ONLY CLASS 5 OFFICERS ARE ALLOWED TO ACCESS THIS DEVICE</div>
-        <div class="barcode">||| | ||||| || | |||| |||</div>
+        <div class="menu-grid">
+            <button class="arasaka-btn" onclick="triggerAction('HACK')">
+                <span>[ BREACH NETWORK ]</span>
+                <span>▶ 01</span>
+            </button>
+            <button class="arasaka-btn" onclick="triggerAction('DATA')">
+                <span>[ ARASAKA DATABASE ]</span>
+                <span>▶ 02</span>
+            </button>
+            <button class="arasaka-btn" onclick="triggerAction('SCAN')">
+                <span>[ CYBERWARE SCAN ]</span>
+                <span>▶ 03</span>
+            </button>
+            <button class="arasaka-btn" onclick="triggerAction('CLOSE')">
+                <span>[ DISCONNECT ]</span>
+                <span>✖ ESC</span>
+            </button>
+        </div>
+
+        <div class="footer">
+            <div>CONFIDENTIAL - ARASAKA SECURITY DIVISION</div>
+            <div class="barcode">||| | ||||| || | |||| |||</div>
+        </div>
     </div>
 
     <script>
-        // Inizializza la Mini App su Telegram
+        // Inizializzazione Telegram WebApp
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Forza la Mini App ad aprirsi a schermo intero su iPhone
 
-        // Legge il nome dell'utente da Telegram e lo inserisce nella schermata
+        // Forzatura Schermo Intero per iPhone
+        tg.expand();
+        if (tg.requestFullscreen) {
+            tg.requestFullscreen();
+        }
+        if (tg.disableVerticalSwipes) {
+            tg.disableVerticalSwipes(); // Impedisce la chiusura accidentale trascinando verso il basso
+        }
+
+        // Recupera il nome dell'utente Telegram
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('telegram-user').innerText = tg.initDataUnsafe.user.first_name.toUpperCase();
         }
 
+        // Animazione del Terminale di Intro
+        const logContent = document.getElementById('log-content');
+        const logs = [
+            "<span class='log-green'>> CONNECTING TO NEURAL PORT... OK</span>",
+            "> BYPASSING ICE FIREWALL...",
+            "> ACCESSING ARASAKA MAIN FRAMEWORK...",
+            "<span class='log-red'>> SECURITY OVERRIDE SUCCESSFUL!</span>",
+            "> LOADING CYBERDECK HUD..."
+        ];
+
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index < logs.length) {
+                logContent.innerHTML += logs[index] + "<br>";
+                index++;
+            } else {
+                clearInterval(interval);
+                setTimeout(() => {
+                    // Nasconde la schermata d'intro e mostra il menu
+                    document.getElementById('intro-screen').style.display = 'none';
+                    document.getElementById('main-hud').style.display = 'flex';
+                    if (tg.HapticFeedback) {
+                        tg.HapticFeedback.notificationOccurred('success'); // Vibrazione di successo
+                    }
+                }, 600);
+            }
+        }, 450);
+
+        // Funzione Pulsanti
         function triggerAction(actionName) {
-            // Genera la vibrazione haptics dell'iPhone al click
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('medium');
             }
 
             if (actionName === 'CLOSE') {
-                tg.close(); // Chiude la Mini App
+                tg.close();
             } else {
-                // Invia la risposta al bot Telegram
                 tg.sendData(JSON.stringify({ action: actionName }));
             }
         }
     </script>
 </body>
 </html>
+
 
