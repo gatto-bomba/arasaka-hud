@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ARASAKA CORP - CYBERDECK</title>
+    <!-- SDK Ufficiale Telegram WebApp -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --red-main: #ff003c;
+            --red-dark: #660018;
+            --bg-black: #080405;
+            --panel-bg: rgba(20, 5, 8, 0.9);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--red-main);
+            min-height: 100vh;
+            padding: 25px 15px 15px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+        }
+
+        /* Effetto griglia CRT / Scanline stile Cyberpunk */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+            background-size: 100% 4px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Intestazione Arasaka */
+        .header {
+            border: 2px solid var(--red-main);
+            padding: 12px;
+            background: var(--panel-bg);
+            box-shadow: 0 0 12px rgba(255, 0, 60, 0.4);
+            position: relative;
+        }
+
+        .header-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--red-dark);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .kanji {
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+        }
+
+        .status-bar {
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            opacity: 0.9;
+        }
+
+        /* Box Stato Sistema (Ispirato agli screen) */
+        .status-box {
+            margin: 15px 0;
+            border: 1px solid var(--red-main);
+            padding: 10px;
+            background: rgba(40, 0, 10, 0.4);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .status-item span:last-child {
+            color: #fff;
+            background: var(--red-dark);
+            padding: 0 4px;
+        }
+
+        /* Menu Pulsanti */
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 5px;
+        }
+
+        .arasaka-btn {
+            background: var(--panel-bg);
+            border: 1px solid var(--red-main);
+            color: var(--red-main);
+            padding: 14px 18px;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+        }
+
+        /* Reazione al tocco su iPhone */
+        .arasaka-btn:active {
+            background: var(--red-main);
+            color: #000;
+            box-shadow: 0 0 15px var(--red-main);
+            transform: scale(0.98);
+        }
+
+        .btn-tag {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* Footer con codice a barre */
+        .footer {
+            margin-top: 15px;
+            text-align: center;
+            border-top: 1px dashed var(--red-main);
+            padding-top: 10px;
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .barcode {
+            letter-spacing: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Intestazione -->
+    <div class="header">
+        <div class="header-title">
+            <span>ARASAKA</span>
+            <span class="kanji">荒坂社</span>
+        </div>
+        <div class="status-bar">
+            <span>SYS: BATTLEDECK V.02</span>
+            <span>SEC: LEVEL 5</span>
+        </div>
+    </div>
+
+    <!-- Box informazioni -->
+    <div class="status-box">
+        <div class="status-item">
+            <span>OPERATORE:</span>
+            <span id="telegram-user">GUEST</span>
+        </div>
+        <div class="status-item">
+            <span>STATO RETE:</span>
+            <span>BREACHED</span>
+        </div>
+        <div class="status-item">
+            <span>IP TARGET:</span>
+            <span>127.0.0.1</span>
+        </div>
+    </div>
+
+    <!-- Lista Pulsanti Menu -->
+    <div class="menu-grid">
+        <button class="arasaka-btn" onclick="triggerAction('HACK')">
+            <span>[ HACK SYSTEM ]</span>
+            <span class="btn-tag">▶ 01</span>
+        </button>
+        <button class="arasaka-btn" onclick="triggerAction('DATA')">
+            <span>[ DATA FILES ]</span>
+            <span class="btn-tag">▶ 02</span>
+        </button>
+        <button class="arasaka-btn" onclick="triggerAction('NET')">
+            <span>[ NETWORK SCAN ]</span>
+            <span class="btn-tag">▶ 03</span>
+        </button>
+        <button class="arasaka-btn" onclick="triggerAction('CLOSE')">
+            <span>[ DISCONNECT ]</span>
+            <span class="btn-tag">✖ ESC</span>
+        </button>
+    </div>
+
+    <!-- Footer Cyberpunk -->
+    <div class="footer">
+        <div>ONLY CLASS 5 OFFICERS ARE ALLOWED TO ACCESS THIS DEVICE</div>
+        <div class="barcode">||| | ||||| || | |||| |||</div>
+    </div>
+
+    <script>
+        // Inizializza la Mini App su Telegram
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Forza la Mini App ad aprirsi a schermo intero su iPhone
+
+        // Legge il nome dell'utente da Telegram e lo inserisce nella schermata
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            document.getElementById('telegram-user').innerText = tg.initDataUnsafe.user.first_name.toUpperCase();
+        }
+
+        function triggerAction(actionName) {
+            // Genera la vibrazione haptics dell'iPhone al click
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+
+            if (actionName === 'CLOSE') {
+                tg.close(); // Chiude la Mini App
+            } else {
+                // Invia la risposta al bot Telegram
+                tg.sendData(JSON.stringify({ action: actionName }));
+            }
+        }
+    </script>
+</body>
+</html>
+
